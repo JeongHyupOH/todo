@@ -29,7 +29,7 @@ export default function TodoList() {
         setIsLoading(true);
         setError(null);
         const data = await api.getTodos(page, pageSize);
-        setTodos(data.items || []);
+        setTodos(Array.isArray(data) ? data : []);
       } catch (error) {
         setError("할 일 목록을 불러오는데 실패했습니다.");
         console.error("Failed to fetch todos:", error);
