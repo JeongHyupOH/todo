@@ -50,9 +50,9 @@ export const api = {
     }
   },
 
-  updateTodo: async (itemId: string, data: UpdateTodoItem) => {
+  updateTodo: async (id: number, data: UpdateTodoItem) => {
     try {
-      const res = await fetch(`${BASE_URL}/${TENANT_ID}/items/${itemId}`, {
+      const res = await fetch(`${BASE_URL}/${TENANT_ID}/items/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
