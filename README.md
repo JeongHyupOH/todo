@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -46,3 +47,6 @@ NextJs, TypeScript 를 기반으로 한 todo-list 웹 서비스입니다.
 7. 상세페이지에서는 수정과 삭제를 할 수 있습니다.
 8. 수정을 할 경우 수정된 내용이 다시금 메인페이지에 저장되어집니다!
 9. 삭제를 할 경우 메인 페이지에서 입력한 해야할 일 해낸 일들이 사라집니다 !    
+=======
+# todo
+>>>>>>> add9cd212c006c4923b1ded9c61cc0a53c5fc9f2
