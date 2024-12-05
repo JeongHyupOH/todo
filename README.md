@@ -37,16 +37,53 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 
-NextJs, TypeScript 를 기반으로 한 todo-list 웹 서비스입니다.
-1. 할 일을 입력해보세요!
-2. 입력한 할 일들이 TODO 에 쌓입니다!
-3. 입력한 일들 앞의 아이콘 클릭시 해낸 일이 됩니다 !
-4. 해낸 일들은 아이콘 클릭시 다시 해야 할일로 되돌릴 수 있어요!
-5. 아이콘이 아닌 배너 클릭시 상세페이지로 들어가게 됩니다!
-6. 상세페이지는 구현에 앞서 어려움이 있어 폰트와 이미지가 구현이 되어있지 않아요 ㅠㅠ
-7. 상세페이지에서는 수정과 삭제를 할 수 있습니다.
-8. 수정을 할 경우 수정된 내용이 다시금 메인페이지에 저장되어집니다!
-9. 삭제를 할 경우 메인 페이지에서 입력한 해야할 일 해낸 일들이 사라집니다 !    
+
+### To do List 프로젝트입니다 
+
+## 주요 기능 
+
+ 1. 메인 페이지 (/)
+    - 할 일을 추가 할 수가 있습니다
+    - 추가 했던 할 일들을 조회 할 수 있습니다
+    - 다 한 일을 따로 조회 할 수 있습니다
+
+ 2. 상세 페이지 (/item/{itemId})
+    - 할 일에 대해 내용을 수정할 수 있습니다
+    - 메모를 추가하고 사진을 추가할 수 있습니다
+    - 삭제하고자 하는 할 일이나 해낸 일들을 삭제할 수 있습니다
+
+  3. 기술 스택 
+
+    - Next.js 
+    - TypeScript
+    - REST API 
+
+  4. API 문서 
+    - 기본 API 문서 : https://assignment-todolist-api.vercel.app/api
+    - 자세한 API 는 Swagger 문서 참조 https://assignment-todolist-api.vercel.app/docs/
+
+
+  5. 디자인 시스템 
+
+    - 반응형 레이아웃 구현
+    - 컬러 시스템 
+    - 재사용 가능한 컴포넌트 
+
+ +++ 추가 사항 및 에러 사항
+
+   이미지 파일을 등록하는 과정에서  Failed to load resource: the server responded with a status of 400 () 에러 발생
+   추후 보완 및 수정 해야합니다
+
+
+
+
+
+
+
+
+
+
 =======
 # todo
 >>>>>>> add9cd212c006c4923b1ded9c61cc0a53c5fc9f2
+
