@@ -70,17 +70,20 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
   
     try {
       setIsLoading(true);
-      await api.updateTodo(Number(itemId), {
+      const updateData = {
         name: todo.name.trim(),
-        memo: todo.memo,
-        imageUrl: todo.imageUrl,
+        memo: todo.memo || '',  // memo가 undefined일 경우 빈 문자열로
+        imageUrl: todo.imageUrl || '',  // imageUrl이 undefined일 경우 빈 문자열로
         isCompleted: todo.isCompleted
-      });
+      };
+  
+      console.log('Updating todo with data:', updateData); // 요청 데이터 확인
       
-      window.dispatchEvent(new Event('todo-updated')); 
+      await api.updateTodo(Number(itemId), updateData);
+      window.dispatchEvent(new Event('todo-updated'));
       router.push('/');
     } catch (error) {
-      console.error('Failed to update todo:', error);
+      console.error('Update failed with error:', error);
     } finally {
       setIsLoading(false);
     }

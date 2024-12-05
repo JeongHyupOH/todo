@@ -63,7 +63,7 @@
 
 .title.completedTitle {
   background-color: var(--violet-100);
-  text-decoration: line-through;
+  text-decoration: underline;
 }
 
 .title::after {

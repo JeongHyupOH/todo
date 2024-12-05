@@ -40,16 +40,28 @@ export const api = {
   },
 
   // Todo 수정
-  updateTodo: async (itemId: number, data: UpdateTodoInput): Promise<Todo> => {
-    const res = await fetch(`${BASE_URL}/${TENANT_ID}/items/${itemId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    });
-    if (!res.ok) throw new Error('Failed to update todo');
-    return res.json();
+  updateTodo: async (id: number, data: UpdateTodoInput) => {
+    try {
+      console.log('Update request data:', data); // 요청 데이터 확인
+      const res = await fetch(`${BASE_URL}/${TENANT_ID}/items/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error('Server error response:', errorData); // 서버 에러 응답 확인
+        throw new Error('Failed to update todo');
+      }
+  
+      return res.json();
+    } catch (error) {
+      console.error('Error updating todo:', error);
+      throw error;
+    }
   },
 
   // Todo 삭제
