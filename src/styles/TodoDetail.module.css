@@ -63,7 +63,7 @@
 }
 
 .title.completedTitle {
-  text-decoration: line-through;
+  text-decoration: underline;
 }
 
 .content {
