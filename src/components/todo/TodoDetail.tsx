@@ -27,7 +27,7 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
 
   useEffect(() => {
     fetchTodo();
-  }, []);
+  }, [itemId]);
 
   const fetchTodo = async () => {
     try {
@@ -124,7 +124,7 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.titleSection}>
+      <div className={`${styles.titleSection} ${todo.isCompleted ? styles.completed : ''}`}>
         <div className={styles.titleWrapper}>
           <div
             className={`${styles.checkbox} ${
@@ -168,9 +168,7 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
               />
             </div>
           ) : (
-            <div className={styles.uploadPlaceholder}>
-              클릭하여 이미지 업로드
-            </div>
+            <span>클릭하여 이미지 업로드</span>
           )}
           <input
             ref={fileInputRef}

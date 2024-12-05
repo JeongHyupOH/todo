@@ -14,6 +14,11 @@
   border-radius: 24px;
   margin-bottom: 24px;
   width: 100%;
+  transition: all 0.2s;
+}
+
+.titleSection.completed {
+  background-color: var(--violet-100);
 }
 
 .titleWrapper {
@@ -39,11 +44,6 @@
   transition: all 0.2s;
 }
 
-.checkbox.checked {
-  background-color: var(--violet-600);
-  border-color: var(--violet-600);
-}
-
 .checkbox.completed {
   background-color: var(--violet-600);
   border-color: var(--violet-600);
@@ -59,26 +59,11 @@
   position: relative;
   transition: all 0.2s;
   border-radius: 12px;
+  background: transparent;
 }
 
 .title.completedTitle {
-  background-color: var(--violet-100);
-  text-decoration: underline;
-}
-
-.title::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 2px;
-  background-color: var(--slate-900);
-  transition: opacity 0.2s;
-}
-
-.title:focus::after {
-  opacity: 0.5;
+  text-decoration: line-through;
 }
 
 .content {
@@ -95,15 +80,12 @@
   background-image: url('/images/이미지.png');
   background-repeat: no-repeat;
   background-position: center;
-  background-size: cover;
+  background-size: 100% 100%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.imageSection:hover {
-  border-color: var(--violet-600);
+  border-radius: 12px;
 }
 
 .imageWrapper {
@@ -126,20 +108,6 @@
   z-index: 2;
 }
 
-.uploadPlaceholder {
-  width: 100%;
-  height: 100%;
-  background-image: url('/images/이미지.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #94A3B8;  /* slate-400 */
-  font-size: 16px;
-}
-
 .memoSection {
   flex: 1;
   width: 588px;
@@ -159,6 +127,7 @@
   margin-bottom: 16px;
   display: block;
   font-weight: bold;
+  text-align: center;
 }
 
 .memoTextarea {
@@ -170,10 +139,7 @@
   font-size: 16px;
   line-height: 1.5;
   color: var(--slate-900);
-}
-
-.memoTextarea::placeholder {
-  color: var(--slate-400);
+  text-align: center;
 }
 
 .memoTextarea:focus {
@@ -195,6 +161,9 @@
   cursor: pointer;
   border: 2px solid var(--slate-900);
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .button:disabled {
@@ -204,10 +173,7 @@
 
 .saveButton {
   background-color: var(--slate-200);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 2px 2px 0 0;
+  box-shadow: 2px 2px 0 0 var(--slate-900);
 }
 
 .saveButton:hover:not(:disabled) {
@@ -217,15 +183,9 @@
 .deleteButton {
   background-color: var(--rose-500);
   color: white;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 2px 2px 0 0;
+  box-shadow: 2px 2px 0 0 var(--slate-900);
 }
 
-
-
-/* Desktop */
 @media (max-width: 1920px) {
   .content {
     gap: 20px;
@@ -236,7 +196,6 @@
   }
 }
 
-/* Tablet */
 @media (max-width: 744px) {
   .content {
     flex-direction: column;
@@ -251,7 +210,6 @@
   }
 }
 
-/* Mobile */
 @media (max-width: 375px) {
   .container {
     padding: 16px;
