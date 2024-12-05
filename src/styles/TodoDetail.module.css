@@ -21,6 +21,7 @@
   align-items: center;
   position: relative;
   width: auto;
+  padding: 4px;
 }
 
 .checkbox {
@@ -32,6 +33,9 @@
   background-color: #FEFCE8;
   margin-right: 4px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s;
 }
 
@@ -40,15 +44,26 @@
   border-color: var(--violet-600);
 }
 
+.checkbox.completed {
+  background-color: var(--violet-600);
+  border-color: var(--violet-600);
+}
+
 .title {
   font-size: 16px;
   border: none;
-  background: transparent;
   text-align: center;
-  padding: 4px 0;
+  padding: 4px 12px;
   width: auto;
   min-width: 100px;
   position: relative;
+  transition: all 0.2s;
+  border-radius: 12px;
+}
+
+.title.completedTitle {
+  background-color: var(--violet-100);
+  text-decoration: line-through;
 }
 
 .title::after {
@@ -77,16 +92,14 @@
   width: 384px;
   height: 100%;
   min-height: 311px;
-  border-radius: 12px;
+  background-image: url('/images/이미지.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
-  background-color: var(--slate-100);
-  border: 2px dashed var(--slate-300);
-  transition: border-color 0.2s;
 }
 
 .imageSection:hover {
@@ -114,8 +127,17 @@
 }
 
 .uploadPlaceholder {
-  color: var(--slate-400);
-  text-align: center;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/이미지.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94A3B8;  /* slate-400 */
+  font-size: 16px;
 }
 
 .memoSection {
@@ -123,10 +145,12 @@
   width: 588px;
   height: 100%;
   min-height: 311px;
-  background-color: #FEFCE8;
+  background-image: url('/images/memo.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   padding: 24px;
   border-radius: 12px;
-  position: relative;
 }
 
 .memoTitle {
@@ -193,12 +217,13 @@
 .deleteButton {
   background-color: var(--rose-500);
   color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   box-shadow: 2px 2px 0 0;
 }
 
-.deleteButton:hover:not(:disabled) {
-  background-color: #E11D48;
-}
+
 
 /* Desktop */
 @media (max-width: 1920px) {

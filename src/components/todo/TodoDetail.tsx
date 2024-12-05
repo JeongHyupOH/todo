@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import styles from '@/styles/TodoDetail.module.css';
-import { api } from '@/utils/api';
-import { Todo } from '@/types/todo';
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import styles from "@/styles/TodoDetail.module.css";
+import { api } from "@/utils/api";
+import { Todo } from "@/types/todo";
+import { DoneCheckbox } from "../icons/DoneCheckbox";
 
 interface TodoDetailProps {
   itemId: string;
@@ -21,7 +22,7 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
     name: "",
     memo: "",
     imageUrl: "",
-    isCompleted: false
+    isCompleted: false,
   });
 
   useEffect(() => {
@@ -36,8 +37,8 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
         setTodo(data);
       }
     } catch (error) {
-      console.error('Failed to fetch todo:', error);
-      router.push('/');
+      console.error("Failed to fetch todo:", error);
+      router.push("/");
     } finally {
       setIsLoading(false);
     }
@@ -48,25 +49,25 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
 
     try {
       if (!/^[a-zA-Z0-9._-]+$/.test(file.name)) {
-        console.error('파일 이름은 영문만 가능합니다.');
+        console.error("파일 이름은 영문만 가능합니다.");
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        console.error('파일 크기는 5MB 이하만 가능합니다.');
+        console.error("파일 크기는 5MB 이하만 가능합니다.");
         return;
       }
 
       const imageData = await api.uploadImage(file);
-      setTodo(prev => ({ ...prev, imageUrl: imageData.url }));
+      setTodo((prev) => ({ ...prev, imageUrl: imageData.url }));
     } catch (error) {
-      console.error('Failed to upload image:', error);
+      console.error("Failed to upload image:", error);
     }
   };
 
   const handleSave = async () => {
     if (!todo.name.trim()) return;
-
+  
     try {
       setIsLoading(true);
       await api.updateTodo(Number(itemId), {
@@ -75,6 +76,8 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
         imageUrl: todo.imageUrl,
         isCompleted: todo.isCompleted
       });
+      
+      window.dispatchEvent(new Event('todo-updated')); 
       router.push('/');
     } catch (error) {
       console.error('Failed to update todo:', error);
@@ -87,9 +90,9 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
     try {
       setIsLoading(true);
       await api.deleteTodo(Number(itemId));
-      router.push('/');
+      router.push("/");
     } catch (error) {
-      console.error('Failed to delete todo:', error);
+      console.error("Failed to delete todo:", error);
     }
   };
 
@@ -101,25 +104,36 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
     <div className={styles.container}>
       <div className={styles.titleSection}>
         <div className={styles.titleWrapper}>
-          <div 
-            className={`${styles.checkbox} ${todo.isCompleted ? styles.checked : ''}`}
-            onClick={() => setTodo(prev => ({ ...prev, isCompleted: !prev.isCompleted }))}
+          <div
+            className={`${styles.checkbox} ${
+              todo.isCompleted ? styles.completed : ""
+            }`}
+            onClick={() =>
+              setTodo((prev) => ({ ...prev, isCompleted: !prev.isCompleted }))
+            }
             role="checkbox"
             aria-checked={todo.isCompleted}
-            tabIndex={0}
-          />
+          >
+            {todo.isCompleted && <DoneCheckbox />} 
+          </div>
           <input
             type="text"
             value={todo.name}
-            onChange={(e) => setTodo(prev => ({ ...prev, name: e.target.value }))}
-            className={styles.title}
+            onChange={(e) =>
+              setTodo((prev) => ({ ...prev, name: e.target.value }))
+            }
+            className={`${styles.title} ${
+              todo.isCompleted ? styles.completedTitle : ""
+            }`}
             placeholder="할 일을 입력하세요"
           />
         </div>
       </div>
-
       <div className={styles.content}>
-        <div className={styles.imageSection} onClick={() => fileInputRef.current?.click()}>
+        <div
+          className={styles.imageSection}
+          onClick={() => fileInputRef.current?.click()}
+        >
           {todo.imageUrl ? (
             <div className={styles.imageWrapper}>
               <Image
@@ -140,7 +154,9 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+            onChange={(e) =>
+              e.target.files?.[0] && handleImageUpload(e.target.files[0])
+            }
             hidden
           />
         </div>
@@ -149,7 +165,9 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
           <span className={styles.memoTitle}>Memo</span>
           <textarea
             value={todo.memo}
-            onChange={(e) => setTodo(prev => ({ ...prev, memo: e.target.value }))}
+            onChange={(e) =>
+              setTodo((prev) => ({ ...prev, memo: e.target.value }))
+            }
             className={styles.memoTextarea}
             placeholder="메모를 입력하세요"
           />
