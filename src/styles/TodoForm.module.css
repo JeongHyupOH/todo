@@ -2,48 +2,33 @@
   display: flex;
   gap: 8px;
   margin-bottom: 32px;
-  width: 100%;
 }
 
 .input {
   flex: 1;
   height: 48px;
   padding: 0 16px;
-  border: 2px solid var(--slate-900);
-  background-color: var(--slate-100);
-  color: var(--slate-500);
+  border: 2px solid #0f172a;
+  background-color: #f1f5f9;
+  color: #64748b;
   border-radius: 24px;
   box-shadow: 2px 2px 0 0;
   font-size: 16px;
-  transition: all 0.2s;
-}
-
-.input:focus {
   outline: none;
-  border-color: var(--violet-600);
-  color: var(--slate-900);
-}
-
-.input::placeholder {
-  color: var(--slate-400);
 }
 
 .button {
   height: 48px;
   padding: 0 24px;
-  background-color: var(--slate-200);
-  border: 2px solid var(--slate-900);
+  background-color: #e2e8f0;
+  border: 2px solid #0f172a;
   border-radius: 24px;
   box-shadow: 2px 2px 0 0;
-  color: var(--slate-900);
+  color: #0f172a;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
 }
 
 .button:disabled {
@@ -52,31 +37,149 @@
 }
 
 .button:hover:not(:disabled) {
-  background-color: var(--violet-600);
+  background-color: #7c3aed;
   color: white;
 }
 
-/* 태블릿 */
+/* styles/TodoList.module.css */
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 100px;
+}
+
+.tabs {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+}
+
+.tabSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tabHeader {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-family: 'HS-Regular', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.todoTab {
+  background-color: #BEF264;
+  color: #0f172a;
+}
+
+.doneTab {
+  background-color: #166534;
+  color: white;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid #0f172a;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border: 2px solid #0f172a;
+  border-radius: 50%;
+  background-color: #FEFCE8;
+  cursor: pointer;
+}
+
+.text {
+  flex: 1;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+.completed {
+  background-color: #EDE9FE;
+}
+
+.completed .text {
+  text-decoration: line-through;
+}
+
+.doneCheckbox {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.emptyImage {
+  width: 240px;
+  height: 240px;
+  margin: 0 auto 24px;
+}
+
+.emptyTextWrapper {
+  text-align: center;
+}
+
+.mainText {
+  margin: 0 0 8px 0;
+  color: #94a3b8;
+  font-size: 16px;
+}
+
+.subText {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 16px;
+}
+
+.loading {
+  text-align: center;
+  padding: 24px;
+  color: #64748b;
+}
+
+/* 반응형 스타일 */
 @media (max-width: 744px) {
-  .form {
-    margin-bottom: 24px;
+  .tabs {
+    flex-direction: column;
+  }
+
+  .emptyImage {
+    width: 240px;
+    height: 240px;
   }
 }
 
-/* 모바일 */
 @media (max-width: 375px) {
-  .form {
-    margin-bottom: 16px;
-  }
-  
-  .input {
-    height: 40px;
-    font-size: 14px;
-  }
-  
-  .button {
-    height: 40px;
-    padding: 0 16px;
-    font-size: 14px;
+  .emptyImage {
+    width: 120px;
+    height: 120px;
   }
 }

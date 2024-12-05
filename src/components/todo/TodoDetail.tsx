@@ -7,10 +7,14 @@ import styles from '@/styles/TodoDetail.module.css';
 import { api } from '@/utils/api';
 import { Todo } from '@/types/todo';
 
-export default function TodoDetail({ itemId }: { itemId: string }) {
+interface TodoDetailProps {
+  itemId: string;
+}
+
+export default function TodoDetail({ itemId }: TodoDetailProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [todo, setTodo] = useState<Todo>({
     id: Number(itemId),
     tenantId: "",
@@ -21,33 +25,50 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
   });
 
   useEffect(() => {
-    const fetchTodo = async () => {
-      try {
-        const data = await api.getTodoById(Number(itemId));
-        if (data) setTodo(data);
-      } catch {
-        router.push('/');
-      }
-    };
     fetchTodo();
-  }, [itemId, router]);
+  }, []);
+
+  const fetchTodo = async () => {
+    try {
+      setIsLoading(true);
+      const data = await api.getTodoById(Number(itemId));
+      if (data) {
+        setTodo(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch todo:', error);
+      router.push('/');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleImageUpload = async (file: File) => {
-    if (!file || file.size > 5 * 1024 * 1024) return;
-    if (!/^[a-zA-Z0-9._-]+$/.test(file.name)) return;
+    if (!file) return;
 
     try {
+      if (!/^[a-zA-Z0-9._-]+$/.test(file.name)) {
+        console.error('파일 이름은 영문만 가능합니다.');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        console.error('파일 크기는 5MB 이하만 가능합니다.');
+        return;
+      }
+
       const imageData = await api.uploadImage(file);
       setTodo(prev => ({ ...prev, imageUrl: imageData.url }));
-    } catch {
-      router.push('/');
+    } catch (error) {
+      console.error('Failed to upload image:', error);
     }
   };
 
   const handleSave = async () => {
     if (!todo.name.trim()) return;
-    
+
     try {
+      setIsLoading(true);
       await api.updateTodo(Number(itemId), {
         name: todo.name.trim(),
         memo: todo.memo,
@@ -55,19 +76,26 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
         isCompleted: todo.isCompleted
       });
       router.push('/');
-    } catch {
-      router.push('/');
+    } catch (error) {
+      console.error('Failed to update todo:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleDelete = async () => {
     try {
+      setIsLoading(true);
       await api.deleteTodo(Number(itemId));
       router.push('/');
-    } catch {
-      router.push('/');
+    } catch (error) {
+      console.error('Failed to delete todo:', error);
     }
   };
+
+  if (isLoading) {
+    return <div className={styles.loading}>로딩 중...</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -78,6 +106,7 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
             onClick={() => setTodo(prev => ({ ...prev, isCompleted: !prev.isCompleted }))}
             role="checkbox"
             aria-checked={todo.isCompleted}
+            tabIndex={0}
           />
           <input
             type="text"
