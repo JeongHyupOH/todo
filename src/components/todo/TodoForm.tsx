@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '@/styles/TodoForm.module.css';
 import { api } from '@/utils/api';
+import { TodoCreateInput } from '@/types/todo';
 
 export default function TodoForm() {
   const [name, setName] = useState('');
@@ -20,7 +21,10 @@ export default function TodoForm() {
     
     try {
       setIsSubmitting(true);
-      await api.createTodo(trimmedName);
+      const createData: TodoCreateInput = {
+        name: trimmedName
+      };
+      await api.createTodo(createData);
       setName('');
       router.refresh();
     } catch (error) {

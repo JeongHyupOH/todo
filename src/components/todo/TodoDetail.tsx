@@ -5,30 +5,15 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from '@/styles/TodoDetail.module.css';
 import { api } from '@/utils/api';
-
-interface TodoItem {
-  id: string;
-  tenantId: string;
-  name: string;
-  memo: string;
-  imageUrl: string;
-  isCompleted: boolean;
-}
-
-interface UpdateTodoItem {
-  name?: string;
-  memo?: string;
-  imageUrl?: string;
-  isCompleted?: boolean;
-}
+import { Todo, TodoUpdateInput } from '@/types/todo';
 
 export default function TodoDetail({ itemId }: { itemId: string }) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [todo, setTodo] = useState<TodoItem>({
-    id: itemId,
+  const [todo, setTodo] = useState<Todo>({
+    id: Number(itemId),
     tenantId: "",
     name: "",
     memo: "",
@@ -40,11 +25,12 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
     const fetchTodo = async () => {
       try {
         setIsLoading(true);
-        const data = await api.getTodoById(itemId);
+        const data = await api.getTodoById(Number(itemId));
         if (data) {
           setTodo(data);
         }
-      } catch {
+      } catch (error) {
+        alert('할 일을 불러오는데 실패했습니다.');
         router.push('/');
       } finally {
         setIsLoading(false);
@@ -98,14 +84,14 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
 
     try {
       setIsLoading(true);
-      const updateData: UpdateTodoItem = {
+      const updateData: TodoUpdateInput = {
         name: todo.name.trim(),
-        memo: todo.memo.trim(),
+        memo: todo.memo,
         imageUrl: todo.imageUrl,
         isCompleted: todo.isCompleted
       };
       
-      await api.updateTodo(itemId, updateData);
+      await api.updateTodo(Number(itemId), updateData);
       router.push("/");
     } catch (error) {
       alert('수정에 실패했습니다.');
@@ -119,7 +105,7 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
     
     try {
       setIsLoading(true);
-      await api.deleteTodo(itemId);
+      await api.deleteTodo(Number(itemId));
       router.push("/");
     } catch (error) {
       alert('삭제에 실패했습니다.');
@@ -147,6 +133,7 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
             value={todo.name}
             onChange={handleNameChange}
             className={styles.title}
+            placeholder="할 일을 입력하세요"
           />
         </div>
       </div>
