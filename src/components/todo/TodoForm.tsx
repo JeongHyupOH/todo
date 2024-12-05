@@ -19,9 +19,13 @@ export default function TodoForm() {
     
     try {
       setIsSubmitting(true);
-      await api.createTodo({ name: trimmedName });
+      const createData: CreateTodoInput = {
+        name: trimmedName
+      };
+      await api.createTodo(createData);
       setName('');
-      router.refresh();
+      // todo-updated 이벤트 발생시키기
+      window.dispatchEvent(new Event('todo-updated'));
     } catch (error) {
       console.error('Failed to create todo:', error);
     } finally {
