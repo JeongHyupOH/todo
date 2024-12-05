@@ -15,20 +15,18 @@ export default function TodoForm() {
     e.preventDefault();
     const trimmedName = name.trim();
     
-    if (!trimmedName) {
-      return;
-    }
+    if (!trimmedName) return;
     
     try {
       setIsSubmitting(true);
       const createData: TodoCreateInput = {
         name: trimmedName
       };
-      await api.createTodo(createData);
-      setName('');
-      router.refresh();
-    } catch (error) {
-      alert('할 일을 추가하는데 실패했습니다.');
+      const response = await api.createTodo(createData);
+      if (response) {
+        setName('');
+        await router.push('/');  
+      }
     } finally {
       setIsSubmitting(false);
     }

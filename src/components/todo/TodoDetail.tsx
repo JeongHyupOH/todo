@@ -69,11 +69,9 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
 
   const handleSave = async () => {
     if (!todo.name.trim()) return;
-
+  
     try {
       setIsLoading(true);
-      router.prefetch('/');
-      
       const updateData: TodoUpdateInput = {
         name: todo.name.trim(),
         memo: todo.memo,
@@ -81,8 +79,10 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
         isCompleted: todo.isCompleted
       };
       
-      await api.updateTodo(Number(itemId), updateData);
-      router.push("/");
+      const response = await api.updateTodo(Number(itemId), updateData);
+      if (response) {  
+        await router.push("/");
+      }
     } finally {
       setIsLoading(false);
     }
