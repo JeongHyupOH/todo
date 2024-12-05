@@ -19,13 +19,9 @@ export default function TodoForm() {
     
     try {
       setIsSubmitting(true);
-      const createData: CreateTodoInput = {
-        name: trimmedName
-      };
-      await api.createTodo(createData);
+      await api.createTodo({ name: trimmedName });
       setName('');
-      // todo-updated 이벤트 발생시키기
-      window.dispatchEvent(new Event('todo-updated'));
+      window.dispatchEvent(new Event('todo-updated')); // 추가
     } catch (error) {
       console.error('Failed to create todo:', error);
     } finally {

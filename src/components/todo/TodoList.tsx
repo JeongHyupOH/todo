@@ -19,7 +19,11 @@ export default function TodoList() {
       setIsLoading(true);
       const data = await api.getTodos();
       console.log('Fetched todos:', data); // 데이터 확인용
-      setTodos(data.items || []);
+      if (data && Array.isArray(data)) {
+        setTodos(data);
+      } else if (data && Array.isArray(data.items)) {
+        setTodos(data.items);
+      }
     } catch (error) {
       console.error('Failed to fetch todos:', error);
     } finally {
@@ -28,17 +32,17 @@ export default function TodoList() {
   };
 
   useEffect(() => {
-    fetchTodos();  // 초기 데이터 로드
+    fetchTodos();
 
-    // TodoForm에서 할 일 추가시 목록 갱신
     const handleTodoUpdated = () => {
       fetchTodos();
     };
-    
-    window.addEventListener('todo-updated', handleTodoUpdated);
-    return () => window.removeEventListener('todo-updated', handleTodoUpdated);
-  }, []);
 
+    window.addEventListener('todo-updated', handleTodoUpdated);
+    return () => {
+      window.removeEventListener('todo-updated', handleTodoUpdated);
+    };
+  }, []);
   const handleToggle = async (id: number, event: React.MouseEvent) => {
     event.stopPropagation();
     try {
