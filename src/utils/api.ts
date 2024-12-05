@@ -1,93 +1,68 @@
-import { Todo, TodoCreateInput, TodoUpdateInput, TodoListResponse, ImageUploadResponse } from '@/types/todo';
+import { Todo, CreateTodoInput, UpdateTodoInput, TodoListResponse, ImageUploadResponse } from '@/types/todo';
 
 const BASE_URL = 'https://assignment-todolist-api.vercel.app/api';
 const TENANT_ID = 'haqu';
 
 export const api = {
+  // Todo 목록 조회
   getTodos: async (page: number = 1, pageSize: number = 10): Promise<TodoListResponse> => {
-    try {
-      const res = await fetch(`${BASE_URL}/${TENANT_ID}/items?page=${page}&pageSize=${pageSize}`);
-      if (!res.ok) throw new Error('Failed to fetch todos');
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching todos:', error);
-      throw error;
-    }
+    const res = await fetch(`${BASE_URL}/${TENANT_ID}/items?page=${page}&pageSize=${pageSize}`);
+    if (!res.ok) throw new Error('Failed to fetch todos');
+    return res.json();
   },
 
+  // 단일 Todo 조회
   getTodoById: async (itemId: number): Promise<Todo> => {
-    try {
-      const res = await fetch(`${BASE_URL}/${TENANT_ID}/items/${itemId}`);
-      if (!res.ok) throw new Error('Failed to fetch todo');
-      return res.json();
-    } catch (error) {
-      console.error('Error fetching todo:', error);
-      throw error;
-    }
+    const res = await fetch(`${BASE_URL}/${TENANT_ID}/items/${itemId}`);
+    if (!res.ok) throw new Error('Failed to fetch todo');
+    return res.json();
   },
 
-  updateTodo: async (id: number, data: TodoUpdateInput): Promise<Todo> => {
-    try {
-      const res = await fetch(`${BASE_URL}/${TENANT_ID}/items/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error('Failed to update todo');
-      return res.json();
-    } catch (error) {
-      console.error('Error updating todo:', error);
-      throw error;
-    }
+  // Todo 생성
+  createTodo: async (data: CreateTodoInput): Promise<Todo> => {
+    const res = await fetch(`${BASE_URL}/${TENANT_ID}/items`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('Failed to create todo');
+    return res.json();
   },
 
-  deleteTodo: async (id: number): Promise<{ message: string }> => {
-    try {
-      const res = await fetch(`${BASE_URL}/${TENANT_ID}/items/${id}`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) throw new Error('Failed to delete todo');
-      return res.json();
-    } catch (error) {
-      console.error('Error deleting todo:', error);
-      throw error;
-    }
+  // Todo 수정
+  updateTodo: async (itemId: number, data: UpdateTodoInput): Promise<Todo> => {
+    const res = await fetch(`${BASE_URL}/${TENANT_ID}/items/${itemId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('Failed to update todo');
+    return res.json();
   },
 
-  createTodo: async (data: TodoCreateInput): Promise<Todo> => {
-    try {
-      const res = await fetch(`${BASE_URL}/${TENANT_ID}/items`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error('Failed to create todo');
-      return res.json();
-    } catch (error) {
-      console.error('Error creating todo:', error);
-      throw error;
-    }
+  // Todo 삭제
+  deleteTodo: async (itemId: number): Promise<{ message: string }> => {
+    const res = await fetch(`${BASE_URL}/${TENANT_ID}/items/${itemId}`, {
+      method: 'DELETE'
+    });
+    if (!res.ok) throw new Error('Failed to delete todo');
+    return res.json();
   },
 
+  // 이미지 업로드
   uploadImage: async (file: File): Promise<ImageUploadResponse> => {
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-      
-      const res = await fetch(`${BASE_URL}/${TENANT_ID}/images/upload`, {
-        method: 'POST',
-        body: formData,
-      });
-      if (!res.ok) throw new Error('Failed to upload image');
-      return res.json();
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      throw error;
-    }
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const res = await fetch(`${BASE_URL}/${TENANT_ID}/images/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    if (!res.ok) throw new Error('Failed to upload image');
+    return res.json();
   }
 };

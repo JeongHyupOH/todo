@@ -1,66 +1,43 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import styles from '@/styles/TodoForm.module.css';
 import { api } from '@/utils/api';
-import { TodoCreateInput } from '@/types/todo';
 
 export default function TodoForm() {
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedName = name.trim();
-    
-    if (!trimmedName) return;
+    if (!trimmedName || isSubmitting) return;
     
     try {
       setIsSubmitting(true);
-      const createData: TodoCreateInput = {
-        name: trimmedName
-      };
-      const response = await api.createTodo(createData);
-      if (response) {
-        setName('');
-        await router.push('/');  
-      }
+      await api.createTodo({ name: trimmedName });
+      setName('');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault(); 
-      handleSubmit(e);
-    }
-  };
-
   return (
-    <form 
-      className={styles.form} 
-      onSubmit={handleSubmit}
-      aria-label="할 일 추가 폼"
-    >
+    <form className={styles.form} onSubmit={handleSubmit}>
       <input
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(e) => e.key === 'Enter' && handleSubmit(e)}
         placeholder="할 일을 입력하세요"
         className={styles.input}
         maxLength={50}
         disabled={isSubmitting}
-        aria-label="할 일 입력"
       />
       <button
         type="submit"
-        className={`${styles.button} ${isSubmitting ? styles.submitting : ''}`}
+        className={styles.button}
         disabled={!name.trim() || isSubmitting}
-        aria-label="할 일 추가"
       >
         {isSubmitting ? '추가 중...' : '+ 추가하기'}
       </button>

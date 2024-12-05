@@ -131,17 +131,13 @@
   width: 100%;
 }
 
-.mainText {
+.mainText, .subText {
   margin: 0;
   color: var(--slate-400);
+  white-space: pre-line;
+  text-align: center;
   font-weight: 500;
   margin-bottom: 8px;
-}
-
-.subText {
-  margin: 0;
-  color: var(--slate-400);
-  font-weight: 500;
 }
 
 /* Desktop */
