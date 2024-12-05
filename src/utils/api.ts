@@ -6,9 +6,17 @@ const TENANT_ID = 'haqu';
 export const api = {
   // Todo 목록 조회
   getTodos: async (page: number = 1, pageSize: number = 10): Promise<TodoListResponse> => {
-    const res = await fetch(`${BASE_URL}/${TENANT_ID}/items?page=${page}&pageSize=${pageSize}`);
-    if (!res.ok) throw new Error('Failed to fetch todos');
-    return res.json();
+    try {
+      console.log('Fetching todos...', `${BASE_URL}/${TENANT_ID}/items`);
+      const res = await fetch(`${BASE_URL}/${TENANT_ID}/items?page=${page}&pageSize=${pageSize}`);
+      console.log('Response status:', res.status);
+      const data = await res.json();
+      console.log('Todos data:', data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching todos:', error);
+      throw error;
+    }
   },
 
   // 단일 Todo 조회

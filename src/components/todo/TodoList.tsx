@@ -11,8 +11,10 @@ import { DoneCheckbox } from '@/components/icons/DoneCheckbox';
 
 export default function TodoList() {
   const router = useRouter();
-  const [todos, setTodos] = useState<Todo[]>([]); // 빈 배열로 초기화
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [page] = useState(1);
+  const [pageSize] = useState(10);
 
   useEffect(() => {
     fetchTodos();
@@ -21,31 +23,40 @@ export default function TodoList() {
   const fetchTodos = async () => {
     try {
       setIsLoading(true);
-      const response = await api.getTodos();
-      setTodos(response.items || []); // 응답이 없을 경우 빈 배열 사용
+      console.log('Fetching todos...');
+      const data = await api.getTodos(page, pageSize);
+      console.log('Todos fetched:', data);
+      setTodos(data.items || []);
+    } catch (error) {
+      console.error('Failed to fetch todos:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleToggle = async (id: number) => {
-    const todo = todos.find(t => t.id === id);
-    if (!todo) return;
-
-    setTodos(prev => prev.map(t => 
-      t.id === id ? { ...t, isCompleted: !t.isCompleted } : t
-    ));
-
+  const handleToggle = async (id: number, event: React.MouseEvent) => {
+    event.stopPropagation();
     try {
-      await api.updateTodo(id, { isCompleted: !todo.isCompleted });
-      await fetchTodos(); // 토글 후 목록 새로고침
-    } catch {
-      await fetchTodos(); // 실패시에도 목록 새로고침
+      const todo = todos.find((t) => t.id === id);
+      if (todo) {
+        // 낙관적 업데이트
+        setTodos(prevTodos => 
+          prevTodos.map(t => 
+            t.id === id ? { ...t, isCompleted: !t.isCompleted } : t
+          )
+        );
+        
+        await api.updateTodo(id, { isCompleted: !todo.isCompleted });
+        await fetchTodos(); // 서버와 동기화
+      }
+    } catch (error) {
+      console.error("Failed to toggle todo:", error);
+      await fetchTodos(); // 실패시 목록 새로고침
     }
   };
 
   const EmptyState = ({ type }: { type: TabType }) => (
-    <div className={styles.empty}>
+    <div className={styles.empty} role="status">
       <div className={styles.emptyImage}>
         {type === "TODO" ? <TodoEmptySvg /> : <DoneEmptySvg />}
       </div>
@@ -64,62 +75,67 @@ export default function TodoList() {
     return <div className={styles.loading}>로딩 중...</div>;
   }
 
-  const todoItems = todos.filter(todo => !todo.isCompleted);
-  const doneItems = todos.filter(todo => todo.isCompleted);
-
   return (
     <div className={styles.container}>
       <div className={styles.tabs}>
         <div className={styles.tabSection}>
-          <div className={styles.tabHeader}>TODO</div>
+          <div className={`${styles.tabHeader} ${styles.todoTab}`}>TODO</div>
           <div className={styles.list}>
-            {todoItems.length === 0 ? (
+            {todos.filter(todo => !todo.isCompleted).length === 0 ? (
               <EmptyState type="TODO" />
             ) : (
-              todoItems.map(todo => (
-                <div
-                  key={todo.id}
-                  className={styles.item}
-                  onClick={() => router.push(`/items/${todo.id}`)}
-                >
+              todos
+                .filter(todo => !todo.isCompleted)
+                .map(todo => (
                   <div
-                    className={styles.checkbox}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggle(todo.id);
-                    }}
-                  />
-                  <span className={styles.text}>{todo.name}</span>
-                </div>
-              ))
+                    key={todo.id}
+                    className={styles.item}
+                    onClick={() => router.push(`/items/${todo.id}`)}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div
+                      className={styles.checkbox}
+                      onClick={(e) => handleToggle(todo.id, e)}
+                      role="checkbox"
+                      aria-checked={false}
+                      tabIndex={0}
+                    />
+                    <span className={styles.text}>{todo.name}</span>
+                  </div>
+                ))
             )}
           </div>
         </div>
-        
+
         <div className={styles.tabSection}>
-          <div className={styles.tabHeader}>DONE</div>
+          <div className={`${styles.tabHeader} ${styles.doneTab}`}>DONE</div>
           <div className={styles.list}>
-            {doneItems.length === 0 ? (
+            {todos.filter(todo => todo.isCompleted).length === 0 ? (
               <EmptyState type="DONE" />
             ) : (
-              doneItems.map(todo => (
-                <div
-                  key={todo.id}
-                  className={`${styles.item} ${styles.completed}`}
-                  onClick={() => router.push(`/items/${todo.id}`)}
-                >
+              todos
+                .filter(todo => todo.isCompleted)
+                .map(todo => (
                   <div
-                    className={styles.checkbox}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggle(todo.id);
-                    }}
+                    key={todo.id}
+                    className={`${styles.item} ${styles.completed}`}
+                    onClick={() => router.push(`/items/${todo.id}`)}
+                    role="button"
+                    tabIndex={0}
                   >
-                    <DoneCheckbox />
+                    <div
+                      className={styles.doneCheckbox}
+                      onClick={(e) => handleToggle(todo.id, e)}
+                      role="checkbox"
+                      aria-checked={true}
+                      tabIndex={0}
+                    >
+                      <DoneCheckbox />
+                    </div>
+                    <span className={styles.text}>{todo.name}</span>
                   </div>
-                  <span className={styles.text}>{todo.name}</span>
-                </div>
-              ))
+                ))
             )}
           </div>
         </div>
