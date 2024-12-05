@@ -29,8 +29,7 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
         if (data) {
           setTodo(data);
         }
-      } catch (error) {
-        alert('할 일을 불러오는데 실패했습니다.');
+      } catch {
         router.push('/');
       } finally {
         setIsLoading(false);
@@ -50,19 +49,11 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
 
     try {
       setIsUploading(true);
-
-      if (!/^[a-zA-Z0-9._-]+$/.test(file.name)) {
-        throw new Error("파일 이름은 영문만 가능합니다.");
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error("파일 크기는 5MB 이하만 가능합니다.");
-      }
+      if (file.size > 5 * 1024 * 1024) return;
+      if (!/^[a-zA-Z0-9._-]+$/.test(file.name)) return;
 
       const imageData = await api.uploadImage(file);
       setTodo(prev => ({ ...prev, imageUrl: imageData.url }));
-    } catch (error) {
-      alert(error instanceof Error ? error.message : "이미지 업로드에 실패했습니다.");
     } finally {
       setIsUploading(false);
     }
@@ -77,13 +68,12 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
   };
 
   const handleSave = async () => {
-    if (!todo.name.trim()) {
-      alert('할 일을 입력해주세요.');
-      return;
-    }
+    if (!todo.name.trim()) return;
 
     try {
       setIsLoading(true);
+      router.prefetch('/');
+      
       const updateData: TodoUpdateInput = {
         name: todo.name.trim(),
         memo: todo.memo,
@@ -93,22 +83,17 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
       
       await api.updateTodo(Number(itemId), updateData);
       router.push("/");
-    } catch (error) {
-      alert('수정에 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm('정말 삭제하시겠습니까?')) return;
-    
     try {
       setIsLoading(true);
+      router.prefetch('/');
       await api.deleteTodo(Number(itemId));
       router.push("/");
-    } catch (error) {
-      alert('삭제에 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
