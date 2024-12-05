@@ -42,25 +42,27 @@ export default function TodoList() {
 
   const handleToggle = async (id: number, event: React.MouseEvent) => {
     event.stopPropagation();
-    try {
-      const todo = todos.find((t) => t.id === id);
-      if (todo) {
-        await api.updateTodo(id, { isCompleted: !todo.isCompleted });
+    const todo = todos.find((t) => t.id === id);
+    
+    if (todo) {
+      try {
         // 낙관적 업데이트
-        setTodos((prevTodos) =>
-          prevTodos.map((t) =>
+        setTodos(prevTodos => 
+          prevTodos.map(t => 
             t.id === id ? { ...t, isCompleted: !t.isCompleted } : t
           )
         );
-        // 실제 데이터로 갱신
+        
+        await api.updateTodo(id, { isCompleted: !todo.isCompleted });
+        
+        // API 호출 후 실제 데이터로 갱신
+        const updatedData = await api.getTodos(page, pageSize);
+        setTodos(updatedData.items || []);
+      } catch {
+        // 실패시 원래 상태로 복구
         const updatedData = await api.getTodos(page, pageSize);
         setTodos(updatedData.items || []);
       }
-    } catch (error) {
-      alert("상태 변경에 실패했습니다.");
-      // 에러 발생 시 원래 상태로 복구
-      const updatedData = await api.getTodos(page, pageSize);
-      setTodos(updatedData.items || []);
     }
   };
 

@@ -80,10 +80,11 @@ export default function TodoDetail({ itemId }: { itemId: string }) {
       };
       
       const response = await api.updateTodo(Number(itemId), updateData);
-      if (response) {  
-        await router.push("/");
+      if (response) {
+        setTodo(response);  
+        setIsLoading(false);
       }
-    } finally {
+    } catch {
       setIsLoading(false);
     }
   };
