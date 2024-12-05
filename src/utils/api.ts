@@ -74,15 +74,32 @@ export const api = {
   },
 
   // 이미지 업로드
-  uploadImage: async (file: File): Promise<ImageUploadResponse> => {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const res = await fetch(`${BASE_URL}/${TENANT_ID}/images/upload`, {
-      method: 'POST',
-      body: formData
-    });
-    if (!res.ok) throw new Error('Failed to upload image');
-    return res.json();
+  uploadImage: async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+  
+      console.log('Uploading image:', {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      });
+  
+      const res = await fetch(`${BASE_URL}/${TENANT_ID}/images/upload`, {
+        method: 'POST',
+        body: formData
+      });
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error('Upload error response:', errorData);
+        throw new Error('Failed to upload image');
+      }
+  
+      return res.json();
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
   }
-};
+}

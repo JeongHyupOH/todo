@@ -48,42 +48,61 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
     if (!file) return;
 
     try {
-      if (!/^[a-zA-Z0-9._-]+$/.test(file.name)) {
-        console.error("파일 이름은 영문만 가능합니다.");
+      // 파일 타입 검증
+      if (!file.type.startsWith("image/")) {
+        console.error("Invalid file type");
         return;
       }
 
-      if (file.size > 5 * 1024 * 1024) {
-        console.error("파일 크기는 5MB 이하만 가능합니다.");
+      // 파일 이름 검증 (영문, 숫자, 특수문자만)
+      if (!/^[a-zA-Z0-9._-]+$/.test(file.name)) {
+        console.error("File name can only contain English characters");
         return;
       }
+
+      // 파일 크기 검증 (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        console.error("File size must be less than 5MB");
+        return;
+      }
+
+      setIsLoading(true);
+
+      // FormData 생성 및 로깅
+      const formData = new FormData();
+      formData.append("image", file);
+      console.log("Uploading file:", file.name, file.type, file.size);
 
       const imageData = await api.uploadImage(file);
-      setTodo((prev) => ({ ...prev, imageUrl: imageData.url }));
+      if (imageData?.url) {
+        setTodo((prev) => ({ ...prev, imageUrl: imageData.url }));
+      }
     } catch (error) {
-      console.error("Failed to upload image:", error);
+      console.error("Image upload failed:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleSave = async () => {
     if (!todo.name.trim()) return;
-  
+
     try {
       setIsLoading(true);
       const updateData = {
         name: todo.name.trim(),
-        memo: todo.memo || '',  // memo가 undefined일 경우 빈 문자열로
-        imageUrl: todo.imageUrl || '',  // imageUrl이 undefined일 경우 빈 문자열로
-        isCompleted: todo.isCompleted
+        memo: todo.memo || "", // memo가 undefined일 경우 빈 문자열로
+        imageUrl: todo.imageUrl || "", // imageUrl이 undefined일 경우 빈 문자열로
+        isCompleted: todo.isCompleted,
       };
-  
-      console.log('Updating todo with data:', updateData); // 요청 데이터 확인
-      
+
+      console.log("Updating todo with data:", updateData); // 요청 데이터 확인
+
       await api.updateTodo(Number(itemId), updateData);
-      window.dispatchEvent(new Event('todo-updated'));
-      router.push('/');
+      window.dispatchEvent(new Event("todo-updated"));
+      router.push("/");
     } catch (error) {
-      console.error('Update failed with error:', error);
+      console.error("Update failed with error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -117,7 +136,7 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
             role="checkbox"
             aria-checked={todo.isCompleted}
           >
-            {todo.isCompleted && <DoneCheckbox />} 
+            {todo.isCompleted && <DoneCheckbox />}
           </div>
           <input
             type="text"
