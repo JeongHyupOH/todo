@@ -164,7 +164,12 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
                 alt="Todo image"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                style={{ objectFit: "contain" }} 
+                style={{ 
+                  objectFit: "cover", 
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '12px'
+                }}
                 priority
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
@@ -184,7 +189,7 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
               if (file) {
                 handleImageUpload(file);
               }
-              e.target.value = ""; // 
+              e.target.value = ""; //
             }}
             hidden
           />
