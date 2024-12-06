@@ -16,6 +16,7 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   const [todo, setTodo] = useState<Todo>({
     id: Number(itemId),
     tenantId: "",
@@ -48,42 +49,35 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
     if (!file) return;
 
     try {
-      // 파일 타입 검증
+      // 파일 검증
       if (!file.type.startsWith("image/")) {
-        console.error("Invalid file type");
+        alert("이미지 파일만 업로드 가능합니다.");
         return;
       }
 
-      // 파일 이름 검증 (영문, 숫자, 특수문자만)
       if (!/^[a-zA-Z0-9._-]+$/.test(file.name)) {
-        console.error("File name can only contain English characters");
+        alert("파일 이름은 영문, 숫자, 특수문자(._-)만 가능합니다.");
         return;
       }
 
-      // 파일 크기 검증 (5MB)
       if (file.size > 5 * 1024 * 1024) {
-        console.error("File size must be less than 5MB");
+        alert("파일 크기는 5MB 이하만 가능합니다.");
         return;
       }
 
-      setIsLoading(true);
-
-      // FormData 생성 및 로깅
-      const formData = new FormData();
-      formData.append("image", file);
-      console.log("Uploading file:", file.name, file.type, file.size);
-
+      setIsUploading(true);
       const imageData = await api.uploadImage(file);
+
       if (imageData?.url) {
         setTodo((prev) => ({ ...prev, imageUrl: imageData.url }));
       }
     } catch (error) {
       console.error("Image upload failed:", error);
+      alert("이미지 업로드에 실패했습니다.");
     } finally {
-      setIsLoading(false);
+      setIsUploading(false);
     }
   };
-
   const handleSave = async () => {
     if (!todo.name.trim()) return;
 
@@ -124,7 +118,11 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
 
   return (
     <div className={styles.container}>
-      <div className={`${styles.titleSection} ${todo.isCompleted ? styles.completed : ''}`}>
+      <div
+        className={`${styles.titleSection} ${
+          todo.isCompleted ? styles.completed : ""
+        }`}
+      >
         <div className={styles.titleWrapper}>
           <div
             className={`${styles.checkbox} ${
@@ -156,6 +154,9 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
           className={styles.imageSection}
           onClick={() => fileInputRef.current?.click()}
         >
+          {isUploading && (
+            <div className={styles.uploadingOverlay}>업로드 중...</div>
+          )}
           {todo.imageUrl ? (
             <div className={styles.imageWrapper}>
               <Image
@@ -163,8 +164,12 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
                 alt="Todo image"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                style={{ objectFit: "cover" }}
+                style={{ objectFit: "contain" }} 
                 priority
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none";
+                }}
               />
             </div>
           ) : (
@@ -174,9 +179,13 @@ export default function TodoDetail({ itemId }: TodoDetailProps) {
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={(e) =>
-              e.target.files?.[0] && handleImageUpload(e.target.files[0])
-            }
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                handleImageUpload(file);
+              }
+              e.target.value = ""; // 
+            }}
             hidden
           />
         </div>
